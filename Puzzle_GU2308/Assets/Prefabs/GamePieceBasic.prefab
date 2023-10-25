@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   X: 0
   Y: 0
+  gamePiece: {fileID: 0}
 --- !u!1 &5744498695993363449
 GameObject:
   m_ObjectHideFlags: 0
@@ -146,3 +147,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   parts:
   - {fileID: 3597369156074234135}
+  centerPart: {fileID: 3597369156074234135}
+  states: []

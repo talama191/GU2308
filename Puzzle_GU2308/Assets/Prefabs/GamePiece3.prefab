@@ -99,6 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   X: 0
   Y: 0
+  gamePiece: {fileID: 0}
 --- !u!1 &156365958485746113
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,6 +151,20 @@ MonoBehaviour:
   - {fileID: 8971000110865500975}
   - {fileID: 4983867627340540300}
   - {fileID: 6658366055715627444}
+  centerPart: {fileID: 4983867627340540300}
+  states:
+  - parts:
+    - {fileID: 8971000110865500975}
+    - {fileID: 6658366055715627444}
+    offsets:
+    - {x: 0, y: 1}
+    - {x: 0, y: -1}
+  - parts:
+    - {fileID: 8971000110865500975}
+    - {fileID: 6658366055715627444}
+    offsets:
+    - {x: 1, y: 0}
+    - {x: -1, y: 0}
 --- !u!1 &7144328507762607834
 GameObject:
   m_ObjectHideFlags: 0
@@ -249,6 +264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   X: 0
   Y: 0
+  gamePiece: {fileID: 0}
 --- !u!1 &7739427727131023732
 GameObject:
   m_ObjectHideFlags: 0
@@ -348,3 +364,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   X: 0
   Y: 0
+  gamePiece: {fileID: 0}

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEditor;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class GameBoard : MonoBehaviour
@@ -10,6 +11,7 @@ public class GameBoard : MonoBehaviour
     [SerializeField] private Vector2Int spawnOrigin;
     [SerializeField] private int width;
     [SerializeField] private int height;
+    [SerializeField] private int gameThreshold;
 
     private List<GameBoardSlot> slots = new List<GameBoardSlot>();
     public Vector2Int SpawnOrigin => spawnOrigin;
@@ -17,6 +19,7 @@ public class GameBoard : MonoBehaviour
     public int LeftBorder => origin.x - 1;
     public int RightBorder => origin.x + width;
     public int BottomBorder => origin.y - height;
+    public int GameThreshold => gameThreshold;
     public int Width => width;
     public int Height => height;
 

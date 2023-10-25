@@ -7,11 +7,14 @@ public class LevelController : MonoBehaviour
 {
     [SerializeField] private float stepCooldown;
     [SerializeField] private List<GamePiece> piecePrefabs;
+
     private GameBoard Board => GameBoard.Instance;
 
     private GamePiece activeGamePiece;
 
     private float stepTimer = 0;
+    private GameState gameState = GameState.Playing;
+
     public static LevelController Instance;
     private void Awake()
     {
@@ -42,13 +45,20 @@ public class LevelController : MonoBehaviour
 
     private void Update()
     {
-        stepTimer += Time.deltaTime;
-        if (stepTimer >= stepCooldown)
+        if (gameState == GameState.Playing)
         {
-            stepTimer = stepCooldown - stepTimer;
-            Step();
+            stepTimer += Time.deltaTime;
+            if (stepTimer >= stepCooldown)
+            {
+                stepTimer = stepCooldown - stepTimer;
+                Step();
+            }
+            MovePiece();
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                if (activeGamePiece != null) activeGamePiece.Rotate();
+            }
         }
-        MovePiece();
     }
 
     private void MovePiece()
@@ -70,10 +80,19 @@ public class LevelController : MonoBehaviour
         var success = activeGamePiece.MovePiece(MoveDirection.Down);
         if (!success)
         {
-            activeGamePiece = SpawnNewGamePiece();
-            CheckLines();
+            if (activeGamePiece.Parts.Any(p => p.Y > Board.GameThreshold))
+            {
+                //TODO ket thuc game tai day
+                gameState = GameState.GameOver;
+            }
         }
 
+        if (!success)
+        {
+            activeGamePiece = SpawnNewGamePiece();
+            // activeGamePiece.Parts.Add(new GamePiece());
+            CheckLines();
+        }
     }
 
     private void CheckLines()
@@ -88,6 +107,7 @@ public class LevelController : MonoBehaviour
             var allOccupied = slots.All(s => s.IsOccupied);
             if (allOccupied)
             {
+                //TODO: An diem
                 foreach (var slot in slots)
                 {
                     var part = slot.part;
@@ -122,5 +142,11 @@ public class LevelController : MonoBehaviour
             }
         }
     }
+}
+
+public enum GameState
+{
+    GameOver,
+    Playing
 }
 

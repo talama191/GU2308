@@ -4,9 +4,9 @@ using UnityEngine;
 
 public class GamePiecePart : MonoBehaviour
 {
-    public int X;
-    public int Y;
-    public GamePiece gamePiece;
+    [HideInInspector] public int X;
+    [HideInInspector] public int Y;
+    [HideInInspector] public GamePiece gamePiece;
 
     public void UpdatePosition(int x, int y)
     {

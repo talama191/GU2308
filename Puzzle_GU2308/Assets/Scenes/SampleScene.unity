@@ -167,10 +167,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c3e6c019737b0e4c89880e8e1c01afb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  origin: {x: -3, y: 3}
-  spawnOrigin: {x: 0, y: 4}
+  origin: {x: -3, y: 8}
+  spawnOrigin: {x: 0, y: 7}
   width: 7
-  height: 9
+  height: 15
+  gameThreshold: 6
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,7 +225,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 7.25
+  orthographic size: 9.25
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -284,13 +285,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1988de473315d234cbef0b831f5e7130, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepCooldown: 0.3
+  stepCooldown: 1
   piecePrefabs:
   - {fileID: 1090558581747813756, guid: 8040860b4ecf2df4aa274d8d44114c92, type: 3}
   - {fileID: 4805754642337474372, guid: 7a294dc209e0c2b4daf638d2d0660505, type: 3}
   - {fileID: 7201909367675352200, guid: ef68498423c4e99488430dfda201a37e, type: 3}
-  - {fileID: 7201909367675352200, guid: 666ac70e8ea25c146ba0ee582f5eb837, type: 3}
-  gameBoard: {fileID: 178314219}
 --- !u!4 &1652028383
 Transform:
   m_ObjectHideFlags: 0
