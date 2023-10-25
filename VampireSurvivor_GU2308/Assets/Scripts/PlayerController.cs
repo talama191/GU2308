@@ -5,11 +5,14 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     public static PlayerController Instance;
+    [SerializeField] private float maxHp;
     [SerializeField] private Skill1Bullet skill1Prefab;
     [SerializeField] private float speed;
-    public float skill1Damage;
     [SerializeField] public float skill1AttackCooldown;
+    public float skill1Damage;
+    private float currentHP;
     private float skill1AttackTimer;
+    private GameState gameState;
 
     private void Awake()
     {
@@ -22,12 +25,31 @@ public class PlayerController : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+        gameState = GameState.Playing;
+    }
+    private void Start()
+    {
+        currentHP = maxHp;
     }
 
     void Update()
     {
-        MoveControl();
-        CastSkill1();
+        if (gameState == GameState.GameOver)
+        {
+
+        }
+        if (gameState == GameState.Playing)
+        {
+            MoveControl();
+            CastSkill1();
+        }
+    }
+
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        UiManager.Instance.UpdateHP(currentHP / maxHp);
+        if (currentHP <= 0) gameState = GameState.GameOver;
     }
 
     private void CastSkill1()
@@ -53,4 +75,10 @@ public class PlayerController : MonoBehaviour
 
         transform.position += new Vector3(moveX, moveY) * speed * Time.deltaTime;
     }
+}
+
+public enum GameState
+{
+    Playing,
+    GameOver
 }
