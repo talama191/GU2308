@@ -10,7 +10,7 @@ public class GamePiece : MonoBehaviour
     [SerializeField] private GamePiecePart centerPart;
     [SerializeField] private List<GamePieceRotationState> states;
 
-    // public List<GamePiecePart> Parts => parts;
+    public List<GamePiecePart> Parts => parts;
     private GameBoard board => GameBoard.Instance;
     private int stateIndex = 0;
 
