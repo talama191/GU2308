@@ -27,6 +27,7 @@ public class LevelController : MonoBehaviour
             Destroy(gameObject);
         }
         DontDestroyOnLoad(gameObject);
+        //
     }
 
     private void Start()
