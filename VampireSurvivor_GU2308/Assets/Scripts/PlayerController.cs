@@ -1,17 +1,20 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
 
 public class PlayerController : MonoBehaviour
 {
+
     public static PlayerController Instance;
+
     [SerializeField] private float maxHp;
-    [SerializeField] private Skill1Bullet skill1Prefab;
     [SerializeField] private float speed;
-    [SerializeField] public float skill1AttackCooldown;
-    public float skill1Damage;
+    // [SerializeField] private List<SkillInfo> skillInfos;
+    [SerializeField] private List<SkillCooldown> skillCooldowns;
     private float currentHP;
-    private float skill1AttackTimer;
     private GameState gameState;
 
     private void Awake()
@@ -26,6 +29,7 @@ public class PlayerController : MonoBehaviour
         }
         DontDestroyOnLoad(gameObject);
         gameState = GameState.Playing;
+
     }
     private void Start()
     {
@@ -41,7 +45,23 @@ public class PlayerController : MonoBehaviour
         if (gameState == GameState.Playing)
         {
             MoveControl();
-            CastSkill1();
+            var enemy = EnemyManager.Instance.GetNearestEnemy(transform.position);
+            if (enemy != null)
+            {
+                var direction = (Vector2)(enemy.transform.position - transform.position).normalized;
+                foreach (var skillCooldown in skillCooldowns)
+                {
+                    skillCooldown.CooldownTimer += Time.deltaTime;
+                    if (skillCooldown.CooldownTimer >= skillCooldown.SkillInfo.Cooldown)
+                    {
+                        skillCooldown.CooldownTimer -= skillCooldown.SkillInfo.Cooldown;
+                        var skill = Instantiate(skillCooldown.SkillInfo.SkillPrefab,
+                         transform.position,
+                          Quaternion.identity);
+                        skill.CastSkill(direction);
+                    }
+                }
+            }
         }
     }
 
@@ -52,21 +72,6 @@ public class PlayerController : MonoBehaviour
         if (currentHP <= 0) gameState = GameState.GameOver;
     }
 
-    private void CastSkill1()
-    {
-        skill1AttackTimer += Time.deltaTime;
-        if (skill1AttackTimer >= skill1AttackCooldown)
-        {
-            skill1AttackTimer = 0;
-            var enemy = EnemyManager.Instance.GetNearestEnemy(transform.position);
-            if (enemy != null)
-            {
-                var bullet = Instantiate(skill1Prefab, transform.position, Quaternion.identity);
-                var direction = (Vector2)(enemy.transform.position - transform.position).normalized;
-                bullet.ShootBullet(direction);
-            }
-        }
-    }
 
     private void MoveControl()
     {
@@ -75,6 +80,17 @@ public class PlayerController : MonoBehaviour
 
         transform.position += new Vector3(moveX, moveY) * speed * Time.deltaTime;
     }
+}
+
+[Serializable]
+public class SkillCooldown
+{
+    [SerializeField] SkillInfo skillInfo;
+    public float CooldownTimer;
+
+    public SkillInfo SkillInfo => skillInfo;
+
+
 }
 
 public enum GameState
