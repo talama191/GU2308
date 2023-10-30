@@ -492,9 +492,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86bbbb99b159b364c9f77a96f8baa648, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basicEnemyPrefab: {fileID: 1892713728529646112, guid: b2a81c7ded2d6d54b9af07791564f9aa, type: 3}
-  minSpawnDistance: 2
-  maxSpawnDistance: 5
+  enemyPrefabs:
+  - {fileID: 1892713728529646112, guid: b2a81c7ded2d6d54b9af07791564f9aa, type: 3}
+  - {fileID: 2371415782957732798, guid: f2b546e6494be814f9fae562df57a9ea, type: 3}
+  minSpawnDistance: 1
+  maxSpawnDistance: 3
   spawnInterval: 1
 --- !u!4 &499099646
 Transform:
@@ -830,7 +832,7 @@ GameObject:
   - component: {fileID: 1210569568}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

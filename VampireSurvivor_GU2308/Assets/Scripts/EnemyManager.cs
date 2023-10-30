@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     public static EnemyManager Instance;
-    [SerializeField] private EnemyBase basicEnemyPrefab;
+    [SerializeField] private List<EnemyBase> enemyPrefabs;
     [SerializeField] private float minSpawnDistance;
     [SerializeField] private float maxSpawnDistance;
     [SerializeField] private float spawnInterval;
@@ -49,7 +49,7 @@ public class EnemyManager : MonoBehaviour
         if (spawnTimer >= spawnInterval)
         {
             spawnTimer = 0;
-            SpawnEnemy(basicEnemyPrefab);
+            SpawnEnemy(enemyPrefabs.OrderBy(e => Random.Range(0f, 1f)).FirstOrDefault());
         }
     }
 

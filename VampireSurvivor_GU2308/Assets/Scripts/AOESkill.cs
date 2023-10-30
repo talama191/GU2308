@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class AOESkill : SkillBase
 {
+    [SerializeField] private ExplodeEffect explodeEffect;
     public AoeSkillInfo aoeSkillInfo => skillInfo as AoeSkillInfo;
 
     public override void CastSkill(Vector2 direction)
@@ -24,11 +25,7 @@ public class AOESkill : SkillBase
                 var enemyBase = enemy.collider.gameObject.GetComponent<EnemyBase>();
                 enemyBase.TakeDamage(skillInfo.Damage);
             }
-            // var enemy = other.GetComponent<EnemyBase>();
-            // enemy.TakeDamage(skillInfo.Damage);
-
-            // var enemy = other.GetComponent<EnemyBase>();
-            // enemy.TakeDamage(skillInfo.Damage);
+            Instantiate(explodeEffect, transform.position, Quaternion.identity);
             Destroy(gameObject);
         }
     }

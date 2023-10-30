@@ -75,7 +75,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: -2526832996998184344, guid: 3750f45c844123341b9a777a96cb1eca, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -130,6 +130,10 @@ MonoBehaviour:
   attackCooldown: 1
   attackDamage: 5
   attackRange: 0.16
+  itemDrops:
+  - {fileID: 8690932528438394741, guid: 6da071abeab2ca348886bac7095a3885, type: 3}
+  - {fileID: 8690932528438394741, guid: e429f4c8ee2923147954829c30cf363b, type: 3}
+  - {fileID: 8690932528438394741, guid: 64378810a575d7b45b8f0a2f4af1bef3, type: 3}
 --- !u!50 &8088782722099375551
 Rigidbody2D:
   serializedVersion: 4

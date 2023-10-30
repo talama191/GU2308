@@ -17,6 +17,38 @@ public class PlayerController : MonoBehaviour
     private float currentHP;
     private GameState gameState;
 
+    public float Speed => isSpeedBuffed ? speed * 1.5f : speed;
+    private float attackSpeedBuffTimer = 0f;
+    private bool isAttackSpeedBuffed = false;
+    private float speedBuffTimer = 0f;
+    private bool isSpeedBuffed = false;
+
+
+    public void HealPlayer(float healAmount)
+    {
+        currentHP += healAmount;
+        if (currentHP > maxHp) currentHP = maxHp;
+        UiManager.Instance.UpdateHP(currentHP / maxHp);
+    }
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        UiManager.Instance.UpdateHP(currentHP / maxHp);
+        if (currentHP <= 0) gameState = GameState.GameOver;
+    }
+
+    public void BoostMoveSpeed(float duration)
+    {
+        isSpeedBuffed = true;
+        speedBuffTimer = 60f;
+    }
+
+    public void BoostAttackSpeed(float duration)
+    {
+        isAttackSpeedBuffed = true;
+        attackSpeedBuffTimer = 60f;
+    }
+
     private void Awake()
     {
         if (Instance == null)
@@ -45,13 +77,23 @@ public class PlayerController : MonoBehaviour
         if (gameState == GameState.Playing)
         {
             MoveControl();
+            attackSpeedBuffTimer -= Time.deltaTime;
+            speedBuffTimer -= Time.deltaTime;
+            if (attackSpeedBuffTimer <= 0)
+            {
+                isAttackSpeedBuffed = false;
+            }
+            if (speedBuffTimer <= 0)
+            {
+                isSpeedBuffed = false;
+            }
             var enemy = EnemyManager.Instance.GetNearestEnemy(transform.position);
             if (enemy != null)
             {
                 var direction = (Vector2)(enemy.transform.position - transform.position).normalized;
                 foreach (var skillCooldown in skillCooldowns)
                 {
-                    skillCooldown.CooldownTimer += Time.deltaTime;
+                    skillCooldown.CooldownTimer += isAttackSpeedBuffed ? Time.deltaTime * 3 : Time.deltaTime;
                     if (skillCooldown.CooldownTimer >= skillCooldown.SkillInfo.Cooldown)
                     {
                         skillCooldown.CooldownTimer -= skillCooldown.SkillInfo.Cooldown;
@@ -65,21 +107,14 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(float damage)
-    {
-        currentHP -= damage;
-        UiManager.Instance.UpdateHP(currentHP / maxHp);
-        if (currentHP <= 0) gameState = GameState.GameOver;
-    }
-
-
     private void MoveControl()
     {
         var moveX = Input.GetAxisRaw("Horizontal");
         var moveY = Input.GetAxisRaw("Vertical");
 
-        transform.position += new Vector3(moveX, moveY) * speed * Time.deltaTime;
+        transform.position += new Vector3(moveX, moveY) * Speed * Time.deltaTime;
     }
+
 }
 
 [Serializable]

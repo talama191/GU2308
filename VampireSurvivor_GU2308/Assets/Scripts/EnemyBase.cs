@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using DG.Tweening;
 using UnityEngine;
@@ -11,15 +12,9 @@ public abstract class EnemyBase : MonoBehaviour
     [SerializeField] protected float attackRange;
 
     private SpriteRenderer rdr;
-    public float MoveSpeed => isSlowed ? moveSpeed * 0.3f : moveSpeed;
+    public float MoveSpeed => moveSpeed;
     protected float currentHP;
     protected float attackTimer = 0;
-    private bool isSlowed;
-
-    public void SlowEnemy()
-    {
-        isSlowed = true;
-    }
 
     private void Awake()
     {
@@ -49,12 +44,21 @@ public abstract class EnemyBase : MonoBehaviour
         }
     }
 
-    private float[] randomItemWeights = new float[] { 30, 30, 40 };
+    private float[] randomItemWeights = new float[] { 30, 30, 40, 300 };
+    [SerializeField] private List<BonusItem> itemDrops;
 
     private void OnDead()
     {
         EnemyManager.Instance.RemoveEnemyFromList(this);
+        var index = RandomItem();
+        SpawnItem(index);
         Destroy(gameObject);
+    }
+
+    private void SpawnItem(int index)
+    {
+        if (randomItemWeights.Count() - 1 <= index) return;
+        Instantiate(itemDrops[index], transform.position, Quaternion.identity);
     }
 
     private int RandomItem()
@@ -65,7 +69,7 @@ public abstract class EnemyBase : MonoBehaviour
         float currentSum = 0;
         for (int i = 0; i < randomItemWeights.Count(); i++)
         {
-            currentSum = randomItemWeights[i];
+            currentSum += randomItemWeights[i];
             if (currentSum > randomRoll)
             {
                 return i;
