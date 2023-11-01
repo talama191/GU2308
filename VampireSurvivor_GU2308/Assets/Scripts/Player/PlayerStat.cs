@@ -1,0 +1,137 @@
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+
+public class PlayerStat : MonoBehaviour
+{
+    public static string SpeedId = "speed";
+    public static string DamageId = "damage";
+    public static string AttackRecoverySpeedId = "attack_speed";
+    public static string AttackRepeatId = "attack_repeat";
+    public static float LevelThreshold = 100f;
+
+    public static PlayerStat Instance;
+
+    [SerializeField] private float baseMaxHp;
+    [SerializeField] private float baseSpeed;
+    [SerializeField] private float baseAttackRecoverySpeed;
+
+    private int attackRepeatCount;
+    private float attackRecoverySpeed;
+    private float speed;
+    private float exp;
+    private float level;
+
+
+    public float AttackRecoverySpeed => attackRecoverySpeed;
+    public float Speed => IsSpeedBuffed ? speed * 1.5f : speed;
+    public bool IsAttackSpeedBuffed { get; private set; } = false;
+    public bool IsSpeedBuffed { get; private set; } = false;
+    public int AttackRepeatCount => attackRepeatCount;
+
+    private float currentHP;
+    private float attackSpeedBuffTimer = 0f;
+    private float speedBuffTimer = 0f;
+    private List<ItemInfoBase> itemInfos = new List<ItemInfoBase>();
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        currentHP = baseMaxHp;
+        speed = baseSpeed;
+        exp = 0;
+        level = 1;
+        attackRepeatCount = 1;
+        attackRecoverySpeed = baseAttackRecoverySpeed;
+    }
+
+    private void Update()
+    {
+        if (GameManager.Instance.gameState == GameState.Playing)
+        {
+            attackSpeedBuffTimer -= Time.deltaTime;
+            speedBuffTimer -= Time.deltaTime;
+            if (attackSpeedBuffTimer <= 0)
+            {
+                IsAttackSpeedBuffed = false;
+            }
+            if (speedBuffTimer <= 0)
+            {
+                IsSpeedBuffed = false;
+            }
+        }
+    }
+
+    public void AddItem(ItemInfoBase itemInfo)
+    {
+        itemInfos.Add(itemInfo);
+        UpdateStats();
+    }
+
+    public void UpdateStats()
+    {
+        speed = GetUpgradedValue(baseSpeed, SpeedId);
+        attackRecoverySpeed = GetUpgradedValue(baseAttackRecoverySpeed, AttackRecoverySpeedId);
+        attackRepeatCount = Mathf.FloorToInt(GetUpgradedValue(1, AttackRepeatId));
+    }
+
+    public float GetUpgradedValue(float baseValue, string statId)
+    {
+        var flatValue = itemInfos.Where(item => item.StatId.Equals(statId) && item.ValueType == UpgradeValueType.Flat)
+        .Select(item => item.Value).Sum();
+        baseValue += flatValue;
+        var percentageValue = itemInfos.Where(item => item.StatId.Equals(statId) && item.ValueType == UpgradeValueType.Percentage)
+        .Select(item => item.Value).Sum();
+        baseValue += baseValue * percentageValue / 100f;
+        return baseValue;
+    }
+
+    public void AddEXP(float expValue)
+    {
+        exp += expValue;
+        if (exp >= 100)
+        {
+            exp -= 100;
+            level++;
+            UiManager.Instance.OpenUpgradePopup();
+        }
+        UiManager.Instance.UpdateXP(exp / 100f);
+    }
+
+    public void HealPlayer(float healAmount)
+    {
+        currentHP += healAmount;
+        if (currentHP > baseMaxHp) currentHP = baseMaxHp;
+        UiManager.Instance.UpdateHP(currentHP / baseMaxHp);
+    }
+    public void TakeDamage(float damage)
+    {
+        currentHP -= damage;
+        UiManager.Instance.UpdateHP(currentHP / baseMaxHp);
+        if (currentHP <= 0) GameManager.Instance.InitGameOver();
+    }
+
+    public void BoostMoveSpeed(float duration)
+    {
+        IsSpeedBuffed = true;
+        speedBuffTimer = 60f;
+    }
+
+    public void BoostAttackSpeed(float duration)
+    {
+        IsAttackSpeedBuffed = true;
+        attackSpeedBuffTimer = 60f;
+    }
+}
