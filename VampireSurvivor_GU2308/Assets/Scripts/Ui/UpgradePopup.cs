@@ -1,5 +1,6 @@
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class UpgradePopup : MonoBehaviour
@@ -9,7 +10,6 @@ public class UpgradePopup : MonoBehaviour
     [SerializeField] private UpgradeItemView upgradeItemViewPrefab;
     [SerializeField] private GameObject container;
 
-    private bool hasSetup = false;
     private void Awake()
     {
         if (Instance == null)
@@ -25,13 +25,62 @@ public class UpgradePopup : MonoBehaviour
 
     public void SetupPopup()
     {
-        if (!hasSetup)
+        foreach (Transform child in container.transform)
         {
-            hasSetup = true;
-            foreach (var item in itemInfos)
+            Destroy(child.gameObject);
+        }
+        var randomItems = new List<ItemInfoBase>();
+        GetRandomItemInfos(randomItems);
+
+        foreach (var item in randomItems)
+        {
+            var itemView = Instantiate(upgradeItemViewPrefab, container.transform);
+            itemView.SetItemData(item);
+        }
+    }
+
+
+    private const int TotalRandomItem = 2;
+    public void GetRandomItemInfos(List<ItemInfoBase> randomItems)
+    {
+        if (randomItems.Count >= TotalRandomItem)
+        {
+            return;
+        }
+        var totalWeight = itemInfos.Sum(i => i.DropChanceWeight);
+
+        float currentWeight = 0;
+        float randomWeight = Random.Range(0, totalWeight);
+        for (int i = 0; i < itemInfos.Count; i++)
+        {
+            currentWeight += itemInfos[i].DropChanceWeight;
+            if (randomWeight < currentWeight)
             {
-                var itemView = Instantiate(upgradeItemViewPrefab, container.transform);
-                itemView.SetItemData(item);
+                if (!randomItems.Contains(itemInfos[i]))
+                {
+                    if (randomItems.Count < TotalRandomItem)
+                    {
+                        randomItems.Add(itemInfos[i]);
+                    }
+                    else
+                    {
+                        return;
+                    }
+                    if (randomItems.Count < TotalRandomItem)
+                    {
+                        GetRandomItemInfos(randomItems);
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                }
+                else
+                {
+                    GetRandomItemInfos(randomItems);
+                }
+                break;
             }
         }
     }

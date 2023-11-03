@@ -28,7 +28,6 @@ public class EnemyManager : MonoBehaviour
     public EnemyBase GetNearestEnemy(Vector3 from)
     {
         if (enemies.Count == 0) return null;
-        // var a = enemies.Min(e => (e.transform.position - from).sqrMagnitude);
         EnemyBase nearestEnemy = null;
         float minDistance = float.MaxValue;
         foreach (var enemy in enemies)

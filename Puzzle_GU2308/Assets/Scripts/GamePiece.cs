@@ -56,6 +56,8 @@ public class GamePiece : MonoBehaviour
                 }
                 return;
             }
+            var boardSlot = GameBoard.Instance.GetSlot(v2Int.x, v2Int.y);
+            if (boardSlot.IsOccupied) return;
         }
 
         foreach (KeyValuePair<GamePiecePart, Vector2Int> kvp in state.partOffsetDict)

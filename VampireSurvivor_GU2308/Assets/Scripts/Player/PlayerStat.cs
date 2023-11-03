@@ -8,6 +8,8 @@ public class PlayerStat : MonoBehaviour
     public static string DamageId = "damage";
     public static string AttackRecoverySpeedId = "attack_speed";
     public static string AttackRepeatId = "attack_repeat";
+
+    public static string AttackSplitId = "attack_split_count";
     public static float LevelThreshold = 100f;
 
     public static PlayerStat Instance;
@@ -16,13 +18,14 @@ public class PlayerStat : MonoBehaviour
     [SerializeField] private float baseSpeed;
     [SerializeField] private float baseAttackRecoverySpeed;
 
+    private int attackSplitCount;
     private int attackRepeatCount;
     private float attackRecoverySpeed;
     private float speed;
     private float exp;
     private float level;
 
-
+    public int AttackSplitCount => attackSplitCount;
     public float AttackRecoverySpeed => attackRecoverySpeed;
     public float Speed => IsSpeedBuffed ? speed * 1.5f : speed;
     public bool IsAttackSpeedBuffed { get; private set; } = false;
@@ -49,10 +52,16 @@ public class PlayerStat : MonoBehaviour
 
     private void Start()
     {
+        InitStat();
+    }
+
+    private void InitStat()
+    {
         currentHP = baseMaxHp;
         speed = baseSpeed;
         exp = 0;
         level = 1;
+        attackSplitCount = 1;
         attackRepeatCount = 1;
         attackRecoverySpeed = baseAttackRecoverySpeed;
     }
@@ -85,6 +94,7 @@ public class PlayerStat : MonoBehaviour
         speed = GetUpgradedValue(baseSpeed, SpeedId);
         attackRecoverySpeed = GetUpgradedValue(baseAttackRecoverySpeed, AttackRecoverySpeedId);
         attackRepeatCount = Mathf.FloorToInt(GetUpgradedValue(1, AttackRepeatId));
+        attackSplitCount = Mathf.FloorToInt(GetUpgradedValue(1, AttackSplitId));
     }
 
     public float GetUpgradedValue(float baseValue, string statId)

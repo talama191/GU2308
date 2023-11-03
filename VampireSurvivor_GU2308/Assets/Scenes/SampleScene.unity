@@ -262,6 +262,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 38dd72cdd1cdaa54295347b588bc5093, type: 2}
   - {fileID: 11400000, guid: 8ac6bd95bb360634aa527cc6d0515a40, type: 2}
   - {fileID: 11400000, guid: 33de5d2bccbf5c14a95e0745c58877e3, type: 2}
+  - {fileID: 11400000, guid: 0dbc7c9c99b72e744a834e7d0f671264, type: 2}
   upgradeItemViewPrefab: {fileID: 1824556633186222310, guid: 6a3cbe3558fdb0242bb57f68e6ea5f61, type: 3}
   container: {fileID: 1393977194}
 --- !u!1 &249573088
@@ -394,6 +395,7 @@ GameObject:
   - component: {fileID: 277024657}
   - component: {fileID: 277024659}
   - component: {fileID: 277024658}
+  - component: {fileID: 277024660}
   m_Layer: 0
   m_Name: PlayerModel
   m_TagString: Player
@@ -494,6 +496,27 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!50 &277024660
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277024656}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &292298684
 GameObject:
   m_ObjectHideFlags: 0
@@ -1149,6 +1172,11 @@ MonoBehaviour:
   - skillInfo: {fileID: 11400000, guid: 8508d06a217a2f64e9db4ccbc186b799, type: 2}
     CooldownTimer: 0
   attackRepeatCooldown: 0.1
+  splitSpacing: 0.3
+  rb: {fileID: 277024660}
+  dashSpeed: 3
+  dashDuration: 0.3
+  dashCooldown: 3
 --- !u!4 &1210569569
 Transform:
   m_ObjectHideFlags: 0
@@ -1180,7 +1208,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseMaxHp: 1000
   baseSpeed: 1
-  baseAttackRecoverySpeed: 2
+  baseAttackRecoverySpeed: 4.22
 --- !u!1 &1298637536
 GameObject:
   m_ObjectHideFlags: 0
