@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    private void OnCollisionEnter2D(Collision2D col)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (col.gameObject.tag == "Player")
+        if (collision.gameObject.tag == "Player")
         {
-            var flappy = col.gameObject.GetComponent<FlappyController>();
+            var flappy = collision.gameObject.GetComponent<FlappyController>();
             flappy.TriggerGameOver();
         }
+
     }
 }

@@ -6,8 +6,8 @@ public class FlappyController : MonoBehaviour
 {
     private static float Ground_Spacing = 6.7f;
 
-    [SerializeField] private Quaternion Up_Quaternion_Bound;
-    [SerializeField] private Quaternion Down_Quaternion_Bound;
+    [SerializeField] private Quaternion upQuaternionBound;
+    [SerializeField] private Quaternion downQuaternionBound;
     [SerializeField] private GameObject ground1;
     [SerializeField] private GameObject ground2;
     [SerializeField] private GameObject flappyVisual;
@@ -54,7 +54,7 @@ public class FlappyController : MonoBehaviour
                 BoostBirdVertical();
             }
         }
-        //RotateBird();
+        RotateBird();
     }
 
     private void MoveBirdVertical()
@@ -88,14 +88,14 @@ public class FlappyController : MonoBehaviour
 
     private void RotateBird()
     {
-        var y = rb.velocity.y;
-        if (y > 0)
+        //var y = rb.velocity.y;
+        if (isBoosting)
         {
-            flappyVisual.transform.rotation = Quaternion.Lerp(transform.rotation, Up_Quaternion_Bound, rotateSpeed * Time.deltaTime);
+            flappyVisual.transform.rotation = Quaternion.Lerp(flappyVisual.transform.rotation, upQuaternionBound, rotateSpeed * Time.deltaTime);
         }
         else
         {
-            flappyVisual.transform.rotation = Quaternion.Lerp(transform.rotation, Down_Quaternion_Bound, rotateSpeed * Time.deltaTime);
+            flappyVisual.transform.rotation = Quaternion.Lerp(flappyVisual.transform.rotation, downQuaternionBound, rotateSpeed * Time.deltaTime);
         }
     }
 
@@ -116,6 +116,12 @@ public class FlappyController : MonoBehaviour
     {
         flappyState = FlappyState.Dead;
         rb.gravityScale = 1;
+    }
+
+    public void ResetGame()
+    {
+        flappyState = FlappyState.Alive;
+        rb.gravityScale = 0;
     }
 }
 
