@@ -1,8 +1,8 @@
 ﻿
 
-public class BulletSupply : PoolingSupply<BulletProjectile>
+public class EnemyBulletSupply : PoolingSupply<BulletProjectile>
 {
-    public static BulletSupply Instance;
+    public static EnemyBulletSupply Instance;
 
     private void Awake()
     {

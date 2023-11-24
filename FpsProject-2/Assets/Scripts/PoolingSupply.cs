@@ -2,13 +2,13 @@
 using System.Linq;
 using UnityEngine;
 
-public abstract class PoolingSupply<T> : MonoBehaviour where T : MonoBehaviour
+public abstract class PoolingSupply<T> : MonoBehaviour where T : Component
 {
-    [SerializeField] private T prefab;
+    [SerializeField] protected T prefab;
 
-    private List<T> pool = new List<T>();
+    protected List<T> pool = new List<T>();
 
-    public T GetSupply()
+    public virtual T GetSupply()
     {
         var supply = pool.FirstOrDefault(t => !t.gameObject.activeInHierarchy);
         if (supply == null)

@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class PlayerMovementController : MonoBehaviour
 {
+    public static PlayerMovementController Instance;
+
     [Header("Movement")]
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float jumpHeight = 2f;
@@ -21,6 +23,20 @@ public class PlayerMovementController : MonoBehaviour
     private float xRotation = 0;
     private Vector3 velocity;
     private bool isGrounded;
+
+    public Vector3 position => transform.position;
+
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {

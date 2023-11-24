@@ -15,6 +15,7 @@ public class ExplosiveProjectile : ProjectileBase
         else
         {
             var contactPoint = other.ClosestPoint(transform.position);
+            Debug.Log("Explode");
             EffectManager.Instance.SpawnEffect(radius, contactPoint);
             RaycastHit[] hits = Physics.SphereCastAll(contactPoint, radius, Vector3.right, 1000f, enemyLayer);
             Debug.Log("Raycasthit count" + hits.Length);

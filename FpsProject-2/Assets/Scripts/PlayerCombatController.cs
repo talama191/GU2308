@@ -36,7 +36,8 @@ public class PlayerCombatController : MonoBehaviour
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 1000f, impactLayerMask))
+            Physics.Raycast(ray, out hit, 1000f, impactLayerMask);
+            if (hit.point != null)
             {
                 var originalDir = (hit.point - projectileSpawn.position);
                 float angle;
@@ -49,6 +50,19 @@ public class PlayerCombatController : MonoBehaviour
                 bullet.transform.position = projectileSpawn.position;
                 bullet.ShootProjectile(finalDir.normalized, projectileSpeed, damage, gravity, true, explosionRadius);
             }
+            else
+            {
+                float angle = 45;
+                var rotation = Quaternion.AngleAxis(-angle, projectileSpawn.transform.right);
+                var finalDir = rotation * projectileSpawn.forward;
+
+                shootTimer = shootCooldown;
+                var bullet = explosiveBulletSupply.GetSupply();
+                bullet.transform.position = projectileSpawn.position;
+                bullet.ShootProjectile(finalDir.normalized, projectileSpeed, damage, gravity, true, explosionRadius);
+            }
+
+
 
 
         }
