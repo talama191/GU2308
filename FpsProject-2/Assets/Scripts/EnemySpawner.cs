@@ -25,7 +25,7 @@ public class EnemySpawner : PoolingSupply<EnemyStat>
     {
         float xOffset = GetRandomRange(1, 15);
         float zOffset = GetRandomRange(1, 15);
-        var playerPos = PlayerMovementController.Instance.position;
+        var playerPos = PlayerMovementController.Instance.Position;
 
         var tempPos = new Vector3(playerPos.x + xOffset, 100, playerPos.z + zOffset);
 

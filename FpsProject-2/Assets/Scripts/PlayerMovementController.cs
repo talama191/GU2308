@@ -24,7 +24,7 @@ public class PlayerMovementController : MonoBehaviour
     private Vector3 velocity;
     private bool isGrounded;
 
-    public Vector3 position => transform.position;
+    public Vector3 Position => transform.position;
 
     private void Awake()
     {
