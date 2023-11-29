@@ -4,7 +4,6 @@ using UnityEngine.AI;
 
 public class AIController : MonoBehaviour
 {
-
     [Header("Idle,Patrol")]
     [SerializeField] private Transform[] patrolPoints;
     [SerializeField] private float walkSpeed;
@@ -34,7 +33,7 @@ public class AIController : MonoBehaviour
         _bulletSupply = EnemyBulletSupply.Instance;
         _stateMachine = new StateMachine();
 
-        _stateMachine.ChangeState(new IdleState(patrolPoints.Select(s => s.position).ToArray(), _agent, this));
+        ChangeToIdleState();
     }
 
     private void Update()
@@ -44,28 +43,17 @@ public class AIController : MonoBehaviour
 
     public void ChangeToCombatState()
     {
-        _stateMachine.ChangeState(new CombatState(_agent, PlayerMovementController.Instance));
+        _stateMachine.ChangeState(new CombatState(_agent, PlayerMovementController.Instance, projectileSpawn));
     }
 
-    private void CombatControl()
+    public void ChangeToFollowState(Vector3 lastSeenPlayerPos)
     {
-        _attackTimer += Time.deltaTime;
-
-        if (_attackTimer > attackCooldown)
-        {
-            var playerPos = PlayerMovementController.Instance.Position;
-            playerPos.y = projectileSpawn.position.y;
-            var direction = playerPos - projectileSpawn.position;
-            HandleShooting(direction);
-        }
+        _stateMachine.ChangeState(new FollowState(_agent, PlayerMovementController.Instance, lastSeenPlayerPos));
     }
 
-    private void HandleShooting(Vector3 direction)
+    public void ChangeToIdleState()
     {
-        _attackTimer = 0;
-        var bullet = _bulletSupply.GetSupply();
-        bullet.transform.position = projectileSpawn.position;
-        bullet.ShootProjectile(direction, projectileSpeed, damage, gravity);
+        _stateMachine.ChangeState(new IdleState(patrolPoints.Select(s => s.position).ToArray(), _agent, this));
     }
 }
 

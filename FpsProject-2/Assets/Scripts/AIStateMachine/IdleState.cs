@@ -5,10 +5,6 @@ using UnityEngine.AI;
 
 public class IdleState : IState
 {
-    private const float DetectInterval = 0.5f;
-    private const float detectRadius = 5f;
-    private const float PatrolPointChangeDestinationRange = 0.5f;
-
     private Vector3[] patrolPoints;
     private int index;
     private NavMeshAgent _agent;
@@ -34,7 +30,7 @@ public class IdleState : IState
         if (_agent.destination != null)
         {
             var directionVector = _agent.transform.position - _agent.destination;
-            if (directionVector.sqrMagnitude < PatrolPointChangeDestinationRange)
+            if (directionVector.sqrMagnitude < GlobalStat.PatrolPointChangeDestinationRange)
             {
                 index++;
                 if (index >= patrolPoints.Length)
@@ -51,11 +47,11 @@ public class IdleState : IState
     private bool DetectPlayer(float dt)
     {
         _detectIntervalTimer += dt;
-        if (_detectIntervalTimer > DetectInterval)
+        if (_detectIntervalTimer > GlobalStat.DetectInterval)
         {
             _detectIntervalTimer = 0;
             RaycastHit playerHit;
-            var colliders = Physics.OverlapSphere(_agent.transform.position, detectRadius, 1 << 7);
+            var colliders = Physics.OverlapSphere(_agent.transform.position, GlobalStat.DetectRadius, 1 << 7);
             if (colliders.Length > 0)
             {
                 var direction = colliders[0].transform.position - _agent.transform.position;

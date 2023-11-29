@@ -24,9 +24,9 @@ public class ExplosiveProjectile : ProjectileBase
                 var damageable = hit.rigidbody.GetComponent<Damageable>();
                 if (damageable != null)
                 {
-                    damageable.TakeDamage(damage);
                     var flyDirection = (hit.collider.transform.position - contactPoint).normalized;
                     hit.rigidbody.AddForce(flyDirection * impactForce, ForceMode.Impulse);
+                    damageable.TakeDamage(damage);
                 }
             }
 

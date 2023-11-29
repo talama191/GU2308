@@ -843,6 +843,8 @@ MonoBehaviour:
   gravity: -0.5
   projectileSpeed: 15
   shootCooldown: 0.2
+  maxBulletOffset: 1000
+  accuracy: 0
   explosionRadius: 2
   impactLayerMask:
     serializedVersion: 2
@@ -2234,6 +2236,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2038034494348918837, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4435075853057016023, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
         type: 3}
       propertyPath: m_RootOrder
@@ -2252,7 +2259,7 @@ PrefabInstance:
     - target: {fileID: 4435075853057016023, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.59
+      value: 2.37
       objectReference: {fileID: 0}
     - target: {fileID: 4435075853057016023, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
         type: 3}
@@ -2288,6 +2295,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4554838706233386835, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
+        type: 3}
+      propertyPath: attackRange
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 4554838706233386835, guid: ca3a2cc4f6065c3489bb100ac6eec9c3,
         type: 3}
