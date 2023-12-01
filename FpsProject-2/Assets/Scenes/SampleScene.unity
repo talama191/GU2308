@@ -844,7 +844,7 @@ MonoBehaviour:
   projectileSpeed: 15
   shootCooldown: 0.2
   maxBulletOffset: 1000
-  accuracy: 0
+  accuracy: 1
   explosionRadius: 2
   impactLayerMask:
     serializedVersion: 2
