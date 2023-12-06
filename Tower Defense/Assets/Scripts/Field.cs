@@ -1,63 +1,60 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 public class Field : MonoSingleton<Field>
 {
-    [SerializeField] private GameObject tempPrefab;
-    [SerializeField] private FieldSlot slotPrefab;
-
-    [SerializeField] private Vector2Int origin;
-    [SerializeField] private Vector2Int fieldSize;
-
     [Header("test")]
     [SerializeField] private Vector2Int start;
     [SerializeField] private Vector2Int end;
 
     private Dictionary<Vector2Int, FieldSlot> fieldSlots;
     private Dictionary<Vector2Int, FieldSlot> emptySlots;
-    private List<GameObject> temps = new List<GameObject>();
 
     private void Awake()
     {
-        CreateField();
+        UpdateFieldSlot();
+        EventRegister.Instance.OnBuildTowerAction += OnBuildTowerAction;
     }
 
-    private void CreateField()
+    private void OnDisable()
     {
+        EventRegister.Instance.OnBuildTowerAction -= OnBuildTowerAction;
+    }
+
+    private void OnBuildTowerAction(string data)
+    {
+        UpdateFieldSlot();
+        EventRegister.Instance.InvokeUpdatePath("");
+    }
+
+    private void UpdateFieldSlot()
+    {
+        var allFieldSlots = gameObject.GetComponentsInChildren<FieldSlot>();
         fieldSlots = new Dictionary<Vector2Int, FieldSlot>();
-
-        for (int x = origin.x; x < fieldSize.x + origin.x; x++)
+        foreach (var slot in allFieldSlots)
         {
-            for (int y = origin.y; y < fieldSize.y + origin.y; y++)
+            var v2Pos = new Vector2Int(Mathf.RoundToInt(slot.transform.position.x), Mathf.RoundToInt(slot.transform.position.y));
+            if (fieldSlots.ContainsKey(v2Pos))
             {
-                var slot = Instantiate(slotPrefab);
-                slot.SetPos(x, y);
-                fieldSlots.Add(new Vector2Int(x, y), slot);
+                DestroyImmediate(slot.gameObject);
+                continue;
             }
-        }
+            else
+            {
+                fieldSlots.Add(v2Pos, slot);
+                slot.SetPos(v2Pos.x, v2Pos.y);
+            }
 
-        foreach (var kvp in fieldSlots)
-        {
-            List<Vector2Int> neighbors = new List<Vector2Int>();
-
-            var up = kvp.Key + Vector2Int.up;
-            if (fieldSlots.ContainsKey(up)) neighbors.Add(up);
-            var right = kvp.Key + Vector2Int.right;
-            if (fieldSlots.ContainsKey(right)) neighbors.Add(right);
-            var down = kvp.Key + Vector2Int.down;
-            if (fieldSlots.ContainsKey(down)) neighbors.Add(down);
-            var left = kvp.Key + Vector2Int.left;
-            if (fieldSlots.ContainsKey(left)) neighbors.Add(left);
-
-            kvp.Value.SetNeighbors(neighbors);
+            slot.gameObject.name = $"Slot {Mathf.RoundToInt(slot.transform.position.x)},{Mathf.RoundToInt(slot.transform.position.y)}";
         }
         UpdateSlots();
     }
 
-    [ContextMenu("Update slot")]
     private void UpdateSlots()
     {
         emptySlots = fieldSlots.Where(s => !s.Value.IsOccupied).ToDictionary(s => s.Key, s => s.Value);
@@ -76,33 +73,37 @@ public class Field : MonoSingleton<Field>
 
             kvp.Value.SetNeighbors(neighbors);
         }
+
+        //var start = EnemySpawner.Instance.StartSlot;
+        //var end = EnemySpawner.Instance.EndSlot;
+        //var path = BFSearch(start.Pos, end.Pos);
+        //foreach (var kvp in fieldSlots)
+        //{
+        //    kvp.Value.isBuildable = true;
+        //}
+        //for (int i = 0; i < path.Count - 1; i++)
+        //{
+        //    if (emptySlots.ContainsValue(path[i]))
+        //    {
+        //        if (!path[i].IsOccupied)
+        //        {
+        //            path[i].SetOccupy(true);
+        //            UpdateFieldSlot();
+        //            if (BFSearch(start.Pos, end.Pos) == null)
+        //            {
+        //                path[i].isBuildable = false;
+        //            }
+        //            path[i].SetOccupy(false);
+        //            UpdateFieldSlot();
+        //        }
+        //    }
+        //}
     }
 
-    [ContextMenu("Find path")]
-    private void FindPath()
+    public List<FieldSlot> BFSearch(Vector2Int start, Vector2Int end)
     {
-
-        var paths = BFSearch(start, end);
-        for (int i = 0; i < temps.Count; i++)
-        {
-            Destroy(temps[i]);
-        }
-        temps.Clear();
-
-        if (paths != null)
-        {
-            foreach (var node in paths)
-            {
-                var obj = Instantiate(tempPrefab);
-                obj.transform.position = (Vector2)node;
-                temps.Add(obj);
-            }
-        }
-    }
-    private List<Vector2Int> BFSearch(Vector2Int start, Vector2Int end)
-    {
-        if (!emptySlots.ContainsKey(start) || !emptySlots.ContainsKey(end)) throw new System.Exception("No slot in field");
-        if (emptySlots[start].IsOccupied || emptySlots[end].IsOccupied) throw new System.Exception("Slot is occupied");
+        if (!emptySlots.ContainsKey(start) || !emptySlots.ContainsKey(end)) return null;
+        if (emptySlots[start].IsOccupied || emptySlots[end].IsOccupied) return null;
 
         List<Vector2Int> visited = new List<Vector2Int>();
         Queue<Vector2Int> queue = new Queue<Vector2Int>();
@@ -133,7 +134,7 @@ public class Field : MonoSingleton<Field>
         return null;
     }
 
-    private List<Vector2Int> ReconstructedPath(Vector2Int start, Vector2Int end, Dictionary<Vector2Int, Vector2Int> cameFroms)
+    private List<FieldSlot> ReconstructedPath(Vector2Int start, Vector2Int end, Dictionary<Vector2Int, Vector2Int> cameFroms)
     {
         List<Vector2Int> path = new List<Vector2Int>();
         Vector2Int current = end;
@@ -147,9 +148,32 @@ public class Field : MonoSingleton<Field>
         path.Add(start);
         path.Reverse();
 
-        return path;
+        List<FieldSlot> slotPath = new List<FieldSlot>();
+        foreach (var p in path)
+        {
+            slotPath.Add(emptySlots[p]);
+        }
+
+        return slotPath;
     }
 
+    private void OnDrawGizmos()
+    {
+        GUIStyle style = new GUIStyle();
+        style.fontSize = 12;
+        style.fontStyle = FontStyle.Bold;
+        if (fieldSlots != null)
+        {
+            foreach (var kvp in fieldSlots)
+            {
+                if (!kvp.Value.IsOccupied) Handles.Label((Vector2)kvp.Key, $"{kvp.Key}", style);
+
+            }
+        }
+    }
+
+    #region Obsolete
+    [Obsolete]
     private List<Vector2Int> DFSearch(Vector2Int start, Vector2Int end)
     {
         if (!fieldSlots.ContainsKey(start) || !fieldSlots.ContainsKey(end)) throw new System.Exception("No slot in field");
@@ -165,6 +189,7 @@ public class Field : MonoSingleton<Field>
         return null;
     }
 
+    [Obsolete]
     private bool DFSRecursive(List<Vector2Int> visited, List<Vector2Int> paths, Vector2Int current, Vector2Int end)
     {
         visited.Add(current);
@@ -191,20 +216,5 @@ public class Field : MonoSingleton<Field>
         paths.Remove(current);
         return false;
     }
-
-    private void OnDrawGizmos()
-    {
-        GUIStyle style = new GUIStyle();
-        style.fontSize = 22;
-        style.fontStyle = FontStyle.Bold;
-        if (fieldSlots != null)
-        {
-            foreach (var kvp in fieldSlots)
-            {
-                if (!kvp.Value.IsOccupied) Handles.Label((Vector2)kvp.Key, $"{kvp.Key}", style);
-
-            }
-        }
-    }
-
+    #endregion
 }
