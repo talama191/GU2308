@@ -46,6 +46,7 @@ public class FieldSlot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        if (Field.Instance.CheckIfSlotBlockOnlyPath(pos)) return;
         if (isBuildable)
         {
             UIController.Instance.OpenBuildSheetPopup(this);

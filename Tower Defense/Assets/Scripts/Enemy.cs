@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -31,12 +32,14 @@ public class Enemy : MonoBehaviour
         {
             path.Clear();
         }
+
     }
 
     private void UpdatePath(Vector2Int start, Vector2Int end)
     {
         pathIndex = 1;
-        path = Field.Instance.BFSearch(start, end);
+        path = Field.Instance.BFSearchOnEmptyField(start, end);
+
     }
 
     private void OnUpdatePath(string data)

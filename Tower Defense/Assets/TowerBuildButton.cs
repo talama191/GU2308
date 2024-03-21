@@ -16,6 +16,8 @@ public class TowerBuildButton : MonoBehaviour
     public void BuildTower()
     {
         slot.BuildTower(image.sprite);
+        AudioManager.Instance.PlayAudioClip();
+
         EventRegister.Instance.InvokeBuildTowerAction("");
     }
 }
